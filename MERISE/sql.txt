@@ -1,0 +1,127 @@
+/*==============================================================*/
+/* Table: ADDRESS                                               */
+/*==============================================================*/
+create table ADDRESS
+(
+   IDADDRESS            int not null,
+   NOMRUE               varchar(40),
+   CODEPOSTAL           numeric(8,0),
+   VILLE                varchar(40),
+   primary key (IDADDRESS)
+);
+
+/*==============================================================*/
+/* Table: AVOIR                                                 */
+/*==============================================================*/
+create table AVOIR
+(
+   IDADDRESS            int not null,
+   IDCLIENT             int not null,
+   primary key (IDADDRESS, IDCLIENT)
+);
+
+/*==============================================================*/
+/* Table: CLIENT                                                */
+/*==============================================================*/
+create table CLIENT
+(
+   IDCLIENT             int not null,
+   MOMCLIENT            varchar(20),
+   MOTPASS              varchar(60),
+   primary key (IDCLIENT)
+);
+
+/*==============================================================*/
+/* Table: COMMANDE                                              */
+/*==============================================================*/
+create table COMMANDE
+(
+   IDCOMMANDE           int not null,
+   IDCLIENT             int not null,
+   IDADDRESS            int not null,
+   DATE_CREATION        date,
+   TOTAL                float,
+   STATU                varchar(40),
+   TELEPHONE            numeric(8,0),
+   primary key (IDCOMMANDE)
+);
+
+/*==============================================================*/
+/* Table: COMMANDE_ADRRSS                                       */
+/*==============================================================*/
+create table COMMANDE_ADRRSS
+(
+   IDCOMMANDE           int not null,
+   IDPAIEMENT           int not null,
+   primary key (IDCOMMANDE, IDPAIEMENT)
+);
+
+/*==============================================================*/
+/* Table: MODE_PAIEMENT                                         */
+/*==============================================================*/
+create table MODE_PAIEMENT
+(
+   IDPAIEMENT           int not null,
+   NOM_PAYMENT          varchar(20),
+   primary key (IDPAIEMENT)
+);
+
+/*==============================================================*/
+/* Table: PANIER                                                */
+/*==============================================================*/
+create table PANIER
+(
+   IDCOMMANDE           int not null,
+   IDPRODUCT            int not null,
+   primary key (IDCOMMANDE, IDPRODUCT)
+);
+
+/*==============================================================*/
+/* Table: PRODUCT_INGREDIENT                                    */
+/*==============================================================*/
+create table PRODUCT_INGREDIENT
+(
+   IDPRODUCT            int not null,
+   IDINGREDIENT         int not null,
+   primary key (IDPRODUCT, IDINGREDIENT)
+);
+
+/*==============================================================*/
+/* Table: PRODUIT                                               */
+/*==============================================================*/
+create table PRODUIT
+(
+   IDPRODUCT            int not null,
+   IDCATEGORIE          int not null,
+   NOM_PRODUCT          varchar(40),
+   PRIX                 decimal,
+   DESCRIPTION          varchar(255),
+   primary key (IDPRODUCT)
+);
+
+alter table AVOIR add constraint FK_AVOIR_AVOIR_CLIENT foreign key (IDCLIENT)
+      references CLIENT (IDCLIENT) on delete restrict on update restrict;
+
+alter table AVOIR add constraint FK_AVOIR_AVOIR2_ADDRESS foreign key (IDADDRESS)
+      references ADDRESS (IDADDRESS) on delete restrict on update restrict;
+
+alter table COMMANDE add constraint FK_COMMANDE_COMMANDEA_ADDRESS foreign key (IDADDRESS)
+      references ADDRESS (IDADDRESS) on delete restrict on update restrict;
+
+alter table COMMANDE add constraint FK_COMMANDE_EFFECTUER_CLIENT foreign key (IDCLIENT)
+      references CLIENT (IDCLIENT) on delete restrict on update restrict;
+
+alter table COMMANDE_ADRRSS add constraint FK_COMMANDE_COMMANDE__MODE_PAI foreign key (IDPAIEMENT)
+      references MODE_PAIEMENT (IDPAIEMENT) on delete restrict on update restrict;
+
+alter table COMMANDE_ADRRSS add constraint FK_COMMANDE_COMMANDE__COMMANDE foreign key (IDCOMMANDE)
+      references COMMANDE (IDCOMMANDE) on delete restrict on update restrict;
+
+alter table PANIER add constraint FK_PANIER_CONTENIR_PRODUIT foreign key (IDPRODUCT)
+      references PRODUIT (IDPRODUCT) on delete restrict on update restrict;
+
+alter table PANIER add constraint FK_PANIER_CONTENIR2_COMMANDE foreign key (IDCOMMANDE)
+      references COMMANDE (IDCOMMANDE) on delete restrict on update restrict;
+
+alter table PRODUCT_INGREDIENT add constraint FK_PRODUCT__PRODUCT_I_PRODUIT foreign key (IDPRODUCT)
+      references PRODUIT (IDPRODUCT) on delete restrict on update restrict;
